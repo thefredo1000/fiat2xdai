@@ -1,1 +1,1 @@
-# honey-pot
+# 1hive-app-template
