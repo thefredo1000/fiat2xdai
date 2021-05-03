@@ -4,7 +4,7 @@ import { GU, useViewport } from '@1hive/1hive-ui'
 import Footer from './Footer'
 import Header from './Header'
 import Layout from './Layout'
-import RampEmbed from './RampEmbed'
+import StepWizard from './Steps/StepWizard'
 
 function MainView({ children }) {
   const { below } = useViewport()
@@ -32,7 +32,7 @@ function MainView({ children }) {
           `}
         >
           <Layout>{children}</Layout>
-          <RampEmbed> </RampEmbed>
+          <StepWizard> </StepWizard>
         </div>
         <Footer compact={compactMode} />
       </div>
