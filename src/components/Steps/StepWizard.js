@@ -8,13 +8,20 @@ function StepWizard() {
   return (
     <div
       css={`
-        padding: 5%;
+        margin: 5%;
       `}
     >
       <StepsHeader>{currStep}</StepsHeader>
-
-      {currStep === 1 && <Step1> </Step1>}
-      {currStep === 2 && <Step2> </Step2>}
+      <div
+        css={`
+          background-color: white;
+          border-radius: 5px;
+          border: 1px solid #efefef;
+        `}
+      >
+        {currStep === 1 && <Step1> </Step1>}
+        {currStep === 2 && <Step2> </Step2>}
+      </div>
     </div>
   )
 }

@@ -21,43 +21,43 @@ function StepHeader(step) {
         <TableRow>
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="large" />
+              <IconCoin size="medium" />
               <br />
               Step 1
             </Text>
           </TableCell>
 
-          <TableCell>
-            <ProgressBar value={currStep === 2 ? 1.0 : 0.0} />
+          <TableCell css="width: 20%">
+            <ProgressBar value={currStep >= 2 ? 1.0 : 0.0} />
           </TableCell>
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="large" />
+              <IconCoin size="medium" />
               <br />
               Step 2
             </Text>
           </TableCell>
 
-          <TableCell>
-            <ProgressBar value={currStep === 3 ? 1.0 : 0.0} />
+          <TableCell css="width: 20%">
+            <ProgressBar value={currStep >= 3 ? 1.0 : 0.0} />
           </TableCell>
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="large" />
+              <IconCoin size="medium" />
               <br />
               Step 3
             </Text>
           </TableCell>
 
-          <TableCell>
-            <ProgressBar value={currStep === 4 ? 1.0 : 0.0} />
+          <TableCell css="width: 20%">
+            <ProgressBar value={currStep >= 4 ? 1.0 : 0.0} />
           </TableCell>
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="large" />
+              <IconCoin size="medium" />
               <br />
               Step 4
             </Text>
