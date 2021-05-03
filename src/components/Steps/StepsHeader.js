@@ -1,6 +1,9 @@
 import React from 'react'
 import {
   IconCoin,
+  IconCircleCheck,
+  IconUser,
+  IconHeart,
   Table,
   TableRow,
   TableCell,
@@ -33,7 +36,7 @@ function StepHeader(step) {
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="medium" />
+              <IconCircleCheck size="medium" />
               <br />
               Step 2
             </Text>
@@ -45,7 +48,7 @@ function StepHeader(step) {
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="medium" />
+              <IconUser size="medium" />
               <br />
               Step 3
             </Text>
@@ -57,7 +60,7 @@ function StepHeader(step) {
 
           <TableCell>
             <Text css={cellCSS}>
-              <IconCoin size="medium" />
+              <IconHeart size="medium" />
               <br />
               Step 4
             </Text>
@@ -65,7 +68,6 @@ function StepHeader(step) {
         </TableRow>
       </Table>
       <br />
-      Step {step.children}
     </div>
   )
 }
