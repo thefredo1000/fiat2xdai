@@ -38,7 +38,26 @@ function Step1() {
         onClick={() => {
           new RampInstantSDK(RampKeys)
             .on('*', event => {
-              console.log(event)
+              var payloadDummy = {
+                type: 'CREATED',
+                purchase: {
+                  id: '322',
+                  fiatCurrency: 'GBP',
+                  fiatValue: 0.05,
+                  poolFee: 0.01,
+                  rampFee: 0.000582831929476256,
+                  receiverAddress: '0x2222222222222222222222222222222222222222',
+                  createdAt: '2019-10-24T14:41:39.372Z',
+                  updatedAt: '2019-10-24T15:41:41.065Z',
+                  status: 'INITIALIZED',
+                },
+              }
+
+              if (payloadDummy.type === 'CREATED') {
+                // Save the info
+              }
+
+              console.log(payloadDummy)
             })
             .show()
         }}
