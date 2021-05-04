@@ -28,7 +28,7 @@ function StepHeader(step) {
           {currStep >= i + 1 ? (
             <IconCircleCheck size={iconSize} />
           ) : (
-            <IconCross size="medium" />
+            <IconCross size={iconSize} />
           )}
           <br />
           Step {i}
@@ -38,7 +38,10 @@ function StepHeader(step) {
     if (i + 1 <= numOfSteps && numOfSteps < 6) {
       stepList.push(
         <TableCell css="width: 10%">
-          <ProgressBar value={currStep >= i + 1 ? 1.0 : 0.0} />
+          <ProgressBar
+            value={currStep >= i + 1 ? 1.0 : 0.0}
+            animate={currStep > i}
+          />
         </TableCell>
       )
     }

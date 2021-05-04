@@ -22,7 +22,7 @@ class Step2 extends React.Component {
             font-family: Poppins, sans-serif;
           `}
         >
-          Step 2
+          Step 3
         </h1>
         <div
           css={`
