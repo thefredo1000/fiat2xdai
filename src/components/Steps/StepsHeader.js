@@ -1,9 +1,7 @@
 import React from 'react'
 import {
-  IconCoin,
   IconCircleCheck,
-  IconUser,
-  IconHeart,
+  IconCross,
   Table,
   TableRow,
   TableCell,
@@ -18,54 +16,38 @@ function StepHeader(step) {
     margin-right: auto;
     text-align: center`
   var currStep = step.children
+
+  var numOfSteps = 5
+  var iconSize = numOfSteps > 6 ? 'medium' : 'tiny'
+
+  var stepList = []
+  for (var i = 1; i <= numOfSteps; i++) {
+    stepList.push(
+      <TableCell>
+        <Text css={cellCSS}>
+          {currStep >= i + 1 ? (
+            <IconCircleCheck size={iconSize} />
+          ) : (
+            <IconCross size="medium" />
+          )}
+          <br />
+          Step {i}
+        </Text>
+      </TableCell>
+    )
+    if (i + 1 <= numOfSteps && numOfSteps < 6) {
+      stepList.push(
+        <TableCell css="width: 10%">
+          <ProgressBar value={currStep >= i + 1 ? 1.0 : 0.0} />
+        </TableCell>
+      )
+    }
+  }
+
   return (
     <div css="text-align: center">
       <Table noSideBorders={false}>
-        <TableRow>
-          <TableCell>
-            <Text css={cellCSS}>
-              <IconCoin size="medium" />
-              <br />
-              Step 1
-            </Text>
-          </TableCell>
-
-          <TableCell css="width: 20%">
-            <ProgressBar value={currStep >= 2 ? 1.0 : 0.0} />
-          </TableCell>
-
-          <TableCell>
-            <Text css={cellCSS}>
-              <IconCircleCheck size="medium" />
-              <br />
-              Step 2
-            </Text>
-          </TableCell>
-
-          <TableCell css="width: 20%">
-            <ProgressBar value={currStep >= 3 ? 1.0 : 0.0} />
-          </TableCell>
-
-          <TableCell>
-            <Text css={cellCSS}>
-              <IconUser size="medium" />
-              <br />
-              Step 3
-            </Text>
-          </TableCell>
-
-          <TableCell css="width: 20%">
-            <ProgressBar value={currStep >= 4 ? 1.0 : 0.0} />
-          </TableCell>
-
-          <TableCell>
-            <Text css={cellCSS}>
-              <IconHeart size="medium" />
-              <br />
-              Step 4
-            </Text>
-          </TableCell>
-        </TableRow>
+        <TableRow>{stepList}</TableRow>
       </Table>
       <br />
     </div>
