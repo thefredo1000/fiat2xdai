@@ -6,6 +6,7 @@
     "@1hive/1hive-ui": "^1.0.2",
     "@aragon/connect": "^0.3.0",
     "@ramp-network/ramp-instant-sdk": "^2.4.2",
+    "axios": "^0.21.1",
     "bignumber.js": "^9.0.0",
     "clipboard-polyfill": "^2.8.6",
     "ethers": "4.0.28",

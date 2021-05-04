@@ -2,6 +2,7 @@ import React from 'react'
 import RampKeys from '../../keys/ramp-key'
 import { Button, Text } from '@1hive/1hive-ui'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
+import axios from 'axios'
 
 function Step1() {
   return (
@@ -37,27 +38,35 @@ function Step1() {
       <Button
         onClick={() => {
           new RampInstantSDK(RampKeys)
-            .on('*', event => {
-              var payloadDummy = {
-                type: 'CREATED',
-                purchase: {
-                  id: '322',
-                  fiatCurrency: 'GBP',
-                  fiatValue: 0.05,
-                  poolFee: 0.01,
-                  rampFee: 0.000582831929476256,
-                  receiverAddress: '0x2222222222222222222222222222222222222222',
-                  createdAt: '2019-10-24T14:41:39.372Z',
-                  updatedAt: '2019-10-24T15:41:41.065Z',
-                  status: 'INITIALIZED',
-                },
+            .on('PURCHASE_SUCCESSFUL', event => {
+              var payload = {
+                type: 'PURCHASE_SUCCESSFUL',
+                id: event.id,
+                _id: event.id,
+                fiatCurrency: event.fiatCurrency,
+                fiatValue: event.fiatValue,
+                poolFee: event.poolFee,
+                rampFee: event.rampFee,
+                receiverAddress: event.receiverAddress,
+                createdAt: event.createdAt,
+                updatedAt: event.updatedAt,
+                status: event.status,
               }
 
-              if (payloadDummy.type === 'CREATED') {
+              if (payload.type === 'PURCHASE_SUCCESSFUL') {
                 // Save the info
+                axios
+                  .post('http://localhost:8082/api/tickets', payload)
+                  .then(res => {
+                    console.log('post request works')
+                  })
+                // Get the info
+                axios
+                  .get('http://localhost:8082/api/tickets/' + payload.id)
+                  .then(res => {
+                    console.log('get resuest works!')
+                  })
               }
-
-              console.log(payloadDummy)
             })
             .show()
         }}
