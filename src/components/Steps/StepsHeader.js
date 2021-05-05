@@ -9,19 +9,9 @@ import {
   IconTarget,
 } from '@1hive/1hive-ui'
 
+import './Style/StepsHeader.css'
+
 function StepHeader(step) {
-  const cellCSS = `
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center
-    background-color: #94ddd6;
-    width: 70px;
-    height: 70px;
-    border-radius: 100%;
-    padding-top: 15%;
-    color: #313635;
-    `
   var currStep = step.children
 
   var numOfSteps = 7
@@ -38,16 +28,16 @@ function StepHeader(step) {
       stepIcon = <IconCross size={iconSize} />
     }
     stepList.push(
-      <TableCell css="padding: 10px">
-        <div css={cellCSS}>
+      <TableCell className="tableCell">
+        <div className="cellContainer">
           {stepIcon}
-          <div css="display: block; margin-top: -10%;">Step {i}</div>
+          <div className="cellText">Step {i}</div>
         </div>
       </TableCell>
     )
     if (i + 1 <= numOfSteps && numOfSteps < 10) {
       stepList.push(
-        <TableCell css="width: 15%; padding-left:0px; padding-right: 0px">
+        <TableCell className="cellProgressBar">
           <ProgressBar
             value={currStep >= i + 1 ? 1.0 : 0.0}
             animate={currStep > i}

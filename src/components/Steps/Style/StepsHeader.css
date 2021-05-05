@@ -1,0 +1,27 @@
+.cellContainer {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  background-color: #c5ede7;
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+  padding-top: 15%;
+  color: #313635;
+}
+
+.tableCell {
+  padding: 10px;
+}
+
+.cellText {
+  display: block;
+  margin-top: -10%;
+}
+
+.cellProgressBar {
+  width: 15%;
+  padding-left:0px;
+  padding-right: 0px;
+}
