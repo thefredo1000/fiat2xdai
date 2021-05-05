@@ -3,7 +3,6 @@ import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import StepsHeader from './StepsHeader'
-
 /*
   The Step Wizard manages the view for each step
   */
@@ -25,16 +24,18 @@ class StepWizard extends React.Component {
     return (
       <div
         css={`
-          margin: 5%;
+          margin-left: 5%;
+          margin-right: 5%;
         `}
       >
         <StepsHeader>{this.currStep}</StepsHeader>
         <div
           css={`
             background-color: white;
-            border-radius: 5px;
+            border-radius: 2px;
             border: 1px solid #efefef;
           `}
+          id="container"
         >
           {this.currStep === 1 && (
             <Step1 setStep={this.setStep}>
