@@ -21,7 +21,7 @@ import { getUseWalletProviders } from '../../lib/web3-utils'
 const SCREENS = [
   {
     id: 'providers',
-    title: 'Ethereum providers',
+    title: 'xDai Chain Provider',
     height:
       4 * GU + // header
       (12 + 1.5) * GU * (getUseWalletProviders().length / 2) + // buttons
@@ -29,7 +29,7 @@ const SCREENS = [
   },
   {
     id: 'connecting',
-    title: 'Ethereum providers',
+    title: 'xDai Chain Provider',
     height: 38 * GU,
   },
   {
@@ -39,7 +39,7 @@ const SCREENS = [
   },
   {
     id: 'error',
-    title: 'Ethereum providers',
+    title: 'xDai Chain Provider',
     height: 50 * GU,
   },
 ]

@@ -1,5 +1,7 @@
 import React from 'react'
-import { Button, Text } from '@1hive/1hive-ui'
+import AccountModuleAlt from '../Account/AccountModuleAlt'
+
+import HoneyswapInt from '../../assets/honeyswap-interface.svg'
 
 class Step2 extends React.Component {
   constructor(currStep) {
@@ -11,40 +13,31 @@ class Step2 extends React.Component {
     return (
       <div
         css={`
-          padding: 5%;
+          padding: 2% 5% 0% 5%;
+          justify-content: space-between;
+          display: flex;
+          align-items: center;
         `}
       >
-        <h1
-          css={`
-            margin-top: 0px;
-            font-size: 30px;
-            font-weight: 700;
-            font-family: Poppins, sans-serif;
-          `}
-        >
-          Step 2
-        </h1>
         <div
           css={`
-            max-width: 450px;
-            margin-top: 20px;
-            padding-left: 10px;
-            border-left: 4px solid #21bf73;
+            margin-top: -10%;
           `}
         >
-          <Text>
-            Zero Bridging Fees From Mainnet. Use the RAMP platform to skip the
-            fuss of bridging and get straight to trading.
-          </Text>
+          <AccountModuleAlt
+            currStep={this.currStep}
+            setStep={this.props.setStep}
+          />
         </div>
-        <br />
-        <Button
-          onClick={() => {
-            this.props.setStep(this.currStep + 1)
-          }}
-        >
-          Next Step
-        </Button>
+        <img
+          src={HoneyswapInt}
+          alt="Honeyswap"
+          css={`
+            width: 850px;
+            padding-left: 10%;
+            padding-right: 5%;
+          `}
+        />
       </div>
     )
   }
