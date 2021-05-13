@@ -3,28 +3,19 @@ import { useWallet } from 'use-wallet'
 import {
   Button,
   GU,
-  RADIUS,
   IconConnect,
   springs,
-  ButtonBase,
-  useTheme,
-  IconCopy,
   Text,
-  textStyle,
-  IconCheck,
   IconArrowRight,
 } from '@1hive/1hive-ui'
 import { Transition, animated } from 'react-spring/renderprops'
 
-import IdentityBadge from '../IdentityBadge'
+import AccountCard from './AccountCard'
 import ScreenError from './ScreenError'
 import ScreenProvidersAlt from './ScreenProvidersAlt'
 import ScreenConnected from './ScreenConnected'
 import ScreenConnecting from './ScreenConnecting'
 import HeaderPopover from '../Header/HeaderPopover'
-import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
-import { getProviderFromUseWalletId } from '../../ethereum-providers'
-
 import { getUseWalletProviders } from '../../lib/web3-utils'
 
 const SCREENS = [
@@ -54,9 +45,6 @@ const SCREENS = [
 ]
 
 function AccountModuleAlt(props, { compact }) {
-  console.log(props)
-  const theme = useTheme()
-  const copy = useCopyToClipboard()
   const buttonRef = useRef()
   const wallet = useWallet()
   const [opened, setOpened] = useState(false)
@@ -67,11 +55,32 @@ function AccountModuleAlt(props, { compact }) {
 
   const { account, activating } = wallet
 
+  window.ethereum.request({
+    id: 1,
+    jsonrpc: '2.0',
+    method: 'wallet_addEthereumChain',
+    params: [
+      {
+        chainId: '0x64',
+        chainName: 'xDAI Chain',
+        rpcUrls: ['https://dai.poa.network'],
+        iconUrls: [
+          'https://xdaichain.com/fake/example/url/xdai.svg',
+          'https://xdaichain.com/fake/example/url/xdai.png',
+        ],
+        nativeCurrency: {
+          name: 'xDAI',
+          symbol: 'xDAI',
+          decimals: 18,
+        },
+        blockExplorerUrls: ['https://blockscout.com/poa/xdai/'],
+      },
+    ],
+  })
+
   const clearError = useCallback(() => setActivationError(null), [])
 
   const toggle = useCallback(() => setOpened(opened => !opened), [])
-
-  const providerInfo = getProviderFromUseWalletId(wallet.activated)
 
   const handleCancelConnection = useCallback(() => {
     wallet.deactivate()
@@ -195,106 +204,7 @@ function AccountModuleAlt(props, { compact }) {
         `}
       >
         {screen.id === 'connected' ? (
-          <div
-            css={`
-              width: 75%;
-              border: 1px solid #efefef;
-              border-radius: 10px;
-              padding: 5%;
-            `}
-          >
-            <div
-              css={`
-                display: flex;
-                align-items: center;
-                width: 100%;
-              `}
-            >
-              <div
-                css={`
-                  display: flex;
-                  align-items: center;
-                  margin-right: ${3 * GU}px;
-                `}
-              >
-                <img
-                  src={providerInfo.image}
-                  alt=""
-                  css={`
-                    width: ${2.5 * GU}px;
-                    height: ${2.5 * GU}px;
-                    margin-right: ${0.5 * GU}px;
-                    transform: translateY(-2px);
-                  `}
-                />
-                <span>
-                  {providerInfo.id === 'unknown' ? 'Wallet' : providerInfo.name}
-                </span>
-              </div>
-              <div
-                css={`
-                  display: flex;
-                  align-items: center;
-                  justify-content: flex-end;
-                  width: 100%;
-                `}
-              >
-                <ButtonBase
-                  onClick={() => copy(wallet.account)}
-                  focusRingRadius={RADIUS}
-                  css={`
-                    display: flex;
-                    align-items: center;
-                    justify-self: flex-end;
-                    padding: ${0.5 * GU}px;
-                    &:active {
-                      background: ${theme.surfacePressed};
-                    }
-                  `}
-                >
-                  <IdentityBadge
-                    entity={wallet.account}
-                    compact
-                    badgeOnly
-                    css="cursor: pointer"
-                  />
-                  <IconCopy
-                    css={`
-                      color: ${theme.hint};
-                    `}
-                  />
-                </ButtonBase>
-              </div>
-            </div>
-            <div
-              css={`
-                display: flex;
-                align-items: center;
-                margin-top: ${1 * GU}px;
-                color: ${theme.positive};
-                ${textStyle('label2')};
-              `}
-            >
-              <IconCheck size="small" />
-              <span
-                css={`
-                  margin-left: ${0.5 * GU}px;
-                `}
-              >
-                Connected to xDai Network
-              </span>
-            </div>
-            <Button
-              onClick={() => wallet.deactivate()}
-              mode="strong"
-              wide
-              css={`
-                margin-top: ${1 * GU}px;
-              `}
-            >
-              Disconnect wallet
-            </Button>
-          </div>
+          <AccountCard />
         ) : (
           <div>
             <Button

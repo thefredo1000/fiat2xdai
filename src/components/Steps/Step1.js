@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Button } from '@1hive/1hive-ui'
+import { Text } from '@1hive/1hive-ui'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import axios from 'axios'
 
@@ -68,17 +68,6 @@ class Step1 extends React.Component {
             Zero Bridging Fees From Mainnet. Use the RAMP platform to skip the
             fuss of bridging and get straight to trading.
           </Text>
-          <Button
-            onClick={() => {
-              // Debug Purposes
-              document
-                .getElementById('container')
-                .removeChild(document.getElementById('ramp-container'))
-              this.props.setStep(this.currStep + 1)
-            }}
-          >
-            Next Step
-          </Button>
         </div>
       </div>
     )
