@@ -44,17 +44,13 @@ const SCREENS = [
   },
 ]
 
-function AccountModuleAlt(props, { compact }) {
-  const buttonRef = useRef()
-  const wallet = useWallet()
-  const [opened, setOpened] = useState(false)
-  const [animate, setAnimate] = useState(false)
-  const [activatingDelayed, setActivatingDelayed] = useState(false)
-  const [activationError, setActivationError] = useState(null)
-  const popoverFocusElement = useRef()
+var chainID
 
-  const { account, activating } = wallet
+function updateChainID(newChainID) {
+  chainID = newChainID
+}
 
+function changeChain() {
   window.ethereum.request({
     id: 1,
     jsonrpc: '2.0',
@@ -76,6 +72,29 @@ function AccountModuleAlt(props, { compact }) {
         blockExplorerUrls: ['https://blockscout.com/poa/xdai/'],
       },
     ],
+  })
+}
+
+function AccountModuleAlt(props, { compact }) {
+  const buttonRef = useRef()
+  const wallet = useWallet()
+  const [opened, setOpened] = useState(false)
+  const [animate, setAnimate] = useState(false)
+  const [activatingDelayed, setActivatingDelayed] = useState(false)
+  const [activationError, setActivationError] = useState(null)
+  const popoverFocusElement = useRef()
+
+  const { account, activating } = wallet
+
+  const getChainID = {
+    jsonrpc: '2.0',
+    method: 'eth_chainId',
+    params: [],
+    id: 0,
+  }
+
+  window.ethereum.request(getChainID).then(res => {
+    updateChainID(res)
   })
 
   const clearError = useCallback(() => setActivationError(null), [])
@@ -170,6 +189,8 @@ function AccountModuleAlt(props, { compact }) {
     }
   }, [screenId])
 
+  window.ethereum.on('chainChanged', _chainId => window.location.reload())
+
   return (
     <div css="width: 100%">
       <h1
@@ -203,22 +224,26 @@ function AccountModuleAlt(props, { compact }) {
           outline: 0;
         `}
       >
-        {screen.id === 'connected' ? (
-          <AccountCard />
+        {chainID === '0x64' ? (
+          screen.id === 'connected' ? (
+            <AccountCard />
+          ) : (
+            <div>
+              <Button
+                icon={<IconConnect />}
+                label="Enable Account"
+                onClick={toggle}
+                display={compact ? 'icon' : 'all'}
+                mode="strong"
+                wide
+                css={`
+                  margin-top: ${2 * GU}px;
+                `}
+              />
+            </div>
+          )
         ) : (
-          <div>
-            <Button
-              icon={<IconConnect />}
-              label="Enable Account"
-              onClick={toggle}
-              display={compact ? 'icon' : 'all'}
-              mode="strong"
-              wide
-              css={`
-                margin-top: ${2 * GU}px;
-              `}
-            />
-          </div>
+          <Button onClick={changeChain}>Change to xDai Network </Button>
         )}
 
         <HeaderPopover

@@ -5,7 +5,6 @@ import {
   GU,
   RADIUS,
   ButtonBase,
-  IconCopy,
   textStyle,
   IconCheck,
   useTheme,
@@ -85,11 +84,6 @@ function AccountCard() {
               compact
               badgeOnly
               css="cursor: pointer"
-            />
-            <IconCopy
-              css={`
-                color: ${theme.hint};
-              `}
             />
           </ButtonBase>
         </div>
