@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@1hive/1hive-ui": "^1.0.2",
+    "@1hive/honeyswap-sdk": "^2.0.0",
     "@aragon/connect": "^0.3.0",
     "@ramp-network/ramp-instant-sdk": "^2.4.2",
     "axios": "^0.21.1",

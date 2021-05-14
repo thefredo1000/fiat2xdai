@@ -195,7 +195,7 @@ function AccountModuleAlt(props, { compact }) {
     <div css="width: 100%">
       <h1
         css={`
-          margin-top: 0px;
+          margin-top: 5%;
           font-size: 40px;
           font-weight: 700;
           font-family: Poppins, sans-serif;
