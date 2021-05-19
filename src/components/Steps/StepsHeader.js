@@ -40,7 +40,7 @@ function StepHeader(step) {
         <TableCell className="cellProgressBar">
           <ProgressBar
             value={currStep >= i + 1 ? 1.0 : 0.0}
-            animate={currStep > i}
+            animate={currStep - 1 === i}
           />
         </TableCell>
       )
