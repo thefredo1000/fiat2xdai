@@ -23,7 +23,7 @@ class Step1 extends React.Component {
 
     // Rikeby test SDK
     new RampInstantSDK({
-      hostAppName: 'Maker DAO',
+      hostAppName: 'Fiat to xDai',
       hostLogoUrl:
         'https://cdn-images-1.medium.com/max/2600/1*nqtMwugX7TtpcS-5c3lRjw.png',
       variant: 'embedded-desktop',
@@ -52,6 +52,8 @@ class Step1 extends React.Component {
         axios
           .get('http://localhost:8082/api/tickets/' + payload.id)
           .then(res => {
+            window.$id = res.data.id
+            window.$fiatValue = res.data.fiatValue
             console.log('get request works!')
           })
         this.setStep(this.currStep + 1)

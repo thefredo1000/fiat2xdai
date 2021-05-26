@@ -1,10 +1,12 @@
 import React from 'react'
-import { Button, Text } from '@1hive/1hive-ui'
+import { Button } from '@1hive/1hive-ui'
 import { useWallet } from 'use-wallet'
+import HoneySwapCard from '../Swap/HoneySwapCard'
 
 function Step3(props) {
   const wallet = useWallet()
   console.log(wallet)
+  console.log(window.$id)
   return (
     <div
       css={`
@@ -23,17 +25,14 @@ function Step3(props) {
       </h1>
       <div
         css={`
-          max-width: 450px;
-          margin-top: 20px;
-          padding-left: 10px;
-          border-left: 4px solid #21bf73;
+          padding-left: auto;
+          padding-right: auto;
+          margin: auto;
         `}
       >
-        <Text>
-          Zero Bridging Fees From Mainnet. Use the RAMP platform to skip the
-          fuss of bridging and get straight to trading.
-        </Text>
+        <HoneySwapCard />
       </div>
+      <h1>Ernest {window.$fiatValue}</h1>
       <br />
       <Button
         onClick={() => {
