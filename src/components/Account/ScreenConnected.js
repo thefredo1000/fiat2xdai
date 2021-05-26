@@ -13,7 +13,7 @@ import IdentityBadge from '../IdentityBadge'
 import { getProviderFromUseWalletId } from '../../ethereum-providers'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 
-function AccountScreenConnected({ wallet }) {
+const AccountScreenConnected = ({ wallet }) =>{
   const theme = useTheme()
   const copy = useCopyToClipboard()
 

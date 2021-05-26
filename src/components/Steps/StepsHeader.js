@@ -28,7 +28,7 @@ function StepHeader(step) {
       stepIcon = <IconCross size={iconSize} />
     }
     stepList.push(
-      <TableCell className="tableCell">
+      <TableCell className="tableCell" key={'step' + i}>
         <div className="cellContainer">
           {stepIcon}
           <div className="cellText">Step {i}</div>
@@ -37,7 +37,7 @@ function StepHeader(step) {
     )
     if (i + 1 <= numOfSteps && numOfSteps < 10) {
       stepList.push(
-        <TableCell className="cellProgressBar">
+        <TableCell className="cellProgressBar" key={'curr' + i}>
           <ProgressBar
             value={currStep >= i + 1 ? 1.0 : 0.0}
             animate={currStep - 1 === i}

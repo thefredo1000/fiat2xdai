@@ -11,7 +11,7 @@ class StepWizard extends React.Component {
   constructor(props) {
     super(props)
     this.setStep = this.setStep.bind(this)
-    this.currStep = 3
+    this.currStep = 2
   }
 
   setStep(currStep) {

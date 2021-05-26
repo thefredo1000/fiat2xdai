@@ -7,7 +7,7 @@ import beeSvg from '../assets/bee.svg'
 import headerBackgroundSvg from '../assets/header-background.svg'
 import logoSvg from '../assets/logotext.svg'
 
-function Header({ compact }) {
+const Header = ( {compact}) => {
   const BeeIcon = <img src={beeSvg} height={compact ? 40 : 60} alt="" />
   const headerItemsWidth = compact ? 'auto' : 25 * GU
 

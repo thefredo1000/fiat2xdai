@@ -12,7 +12,7 @@ function useWalletAugmented() {
 }
 
 // Adds Ethers.js to the useWallet() object
-function WalletAugmented({ children }) {
+const  WalletAugmented = ({ children }) =>{
   const wallet = useWallet()
   const { ethereum } = wallet
 

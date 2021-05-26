@@ -75,7 +75,7 @@ function changeChain() {
   })
 }
 
-function AccountModuleAlt(props, { compact }) {
+const AccountModuleAlt = (props, { compact })=> {
   const buttonRef = useRef()
   const wallet = useWallet()
   const [opened, setOpened] = useState(false)
@@ -170,7 +170,7 @@ function AccountModuleAlt(props, { compact }) {
   const screenId = screen.id
 
   const handlePopoverClose = useCallback(
-    reject => {
+    (reject) => {
       if (screenId === 'connecting' || screenId === 'error') {
         // reject closing the popover
         return false
@@ -189,7 +189,7 @@ function AccountModuleAlt(props, { compact }) {
     }
   }, [screenId])
 
-  window.ethereum.on('chainChanged', _chainId => window.location.reload())
+  window.ethereum.on('chainChanged', (chainId) =>updateChainID(chainId))
 
   return (
     <div css="width: 100%">

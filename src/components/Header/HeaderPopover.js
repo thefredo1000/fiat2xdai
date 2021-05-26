@@ -5,7 +5,7 @@ import { Spring, animated } from 'react-spring/renderprops'
 
 const AnimatedSection = animated.section
 
-function HeaderPopover({
+const HeaderPopover = ({
   animateHeight,
   children,
   height,
@@ -14,7 +14,7 @@ function HeaderPopover({
   onClose,
   opener,
   visible,
-}) {
+})=> {
   const theme = useTheme()
 
   return (
