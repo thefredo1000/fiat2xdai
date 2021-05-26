@@ -10,17 +10,38 @@ import {
   ButtonBase,
 } from '@1hive/1hive-ui'
 import { useWallet } from 'use-wallet'
+import { Fetcher, ChainId } from '@1hive/honeyswap-sdk'
 
 import IdentityBadge from '../IdentityBadge'
 import xDaiIcon from '../../assets/xDai-icon.png'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import { ethers } from 'ethers'
+import { networkFromChainId } from '@aragon/connect-core'
 
 function HoneySwapCard(props) {
   window.$fiatValue = 100
   const copy = useCopyToClipboard()
   const wallet = useWallet()
   const theme = useTheme()
-  console.log(theme)
+
+  // xDai Chain and HNY Token Address
+  const chainId = ChainId.XDAI
+  const tokenAddress = '0x71850b7e9ee3f13ab46d67167341e4bdc905eef9'
+
+  const provider = new ethers.providers.Web3Provider(
+    window.web3.currentProvider,
+    networkFromChainId(chainId)
+  )
+
+  Fetcher.fetchTokenData(chainId, tokenAddress, provider)
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+  // WIP
   var xDaiBalance = window.$fiatValue
   var [xDaiValue, setXDaiValue] = useState(xDaiBalance - 1)
   var [hnyValue, setHNYValue] = useState(xDaiBalance / 800)
