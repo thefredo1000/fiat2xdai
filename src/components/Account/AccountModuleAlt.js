@@ -85,6 +85,8 @@ const AccountModuleAlt = (props, { compact })=> {
   const popoverFocusElement = useRef()
 
   const { account, activating } = wallet
+  
+  window.$fiatValue = (wallet.balance / (10 ** 18)).toFixed(3)
 
   const getChainID = {
     jsonrpc: '2.0',

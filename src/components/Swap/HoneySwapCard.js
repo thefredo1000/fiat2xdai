@@ -1,16 +1,25 @@
 import React, { useState } from 'react'
 
 import {
+  GU,
+} from '@1hive/1hive-ui'
+import { 
   Button,
   TextInput,
   useTheme,
-  GU,
   Header,
   RADIUS,
   ButtonBase,
-} from '@1hive/1hive-ui'
+  Table,
+  TableRow,
+  TableCell,
+  Split,
+  Box,
+  textStyle
+} from '@aragon/ui'
 import { useWallet } from 'use-wallet'
-import { Fetcher, ChainId, Token, WETH } from '@1hive/honeyswap-sdk'
+import { Fetcher, ChainId, Token, WETH, Route, Trade, TokenAmount, TradeType, Currency, currencyEquals, Percent, Pair } from '@1hive/honeyswap-sdk'
+import { Contract } from '@ethersproject/contracts'
 
 import IdentityBadge from '../IdentityBadge'
 import xDaiIcon from '../../assets/xDai-icon.png'
@@ -18,44 +27,74 @@ import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 import { ethers } from 'ethers'
 import { networkFromChainId } from '@aragon/connect-core'
 
+import './style/HoneySwapCard.css'
 const HoneySwapCard = (props) =>{
   window.$fiatValue = 100
   const copy = useCopyToClipboard()
   const wallet = useWallet()
   const theme = useTheme()
 
-  // xDai Chain and HNY Token Address
   const chainId = ChainId.XDAI
-  const HNY = new Token(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', 18, 'HNY', 'Honey')
-  const USDC = new Token(chainId, '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83', 18, 'USDC', 'USD//C from Ethereum')
-  // const hnyAddress = '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9'
-  // const xdaiAddress = '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'
-  // const usdcAddress = '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83'
-
   const provider = new ethers.providers.Web3Provider(
     window.web3.currentProvider,
     networkFromChainId(chainId)
   )
 
-  Fetcher.fetchPairData(HNY, WETH[HNY.chainId], provider)
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  async function swap(amountIn) {
 
-  Fetcher.fetchPairData(USDC, WETH[USDC.chainId], provider)
-    .then(res => {
-      console.log(res)
+    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
+    const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
+
+    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider)
+    const route = new Route([pair], WXDAI)
+
+    const trade = new Trade(route, new TokenAmount(WXDAI, amountIn.toString()), TradeType.EXACT_INPUT)
+  
+    const slippageTolerance = new Percent('50', '10000') // 50 bips, or 0.50%
+  
+    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
+    const amountOutMinHex = ethers.BigNumber.from(amountOutMin.toString()).toHexString();
+    const path = [WXDAI.address, HNY.address]
+    const to = '0x29FFeBCa51ecD940cb37EF91ff83cD739553b93e' // should be a checksummed recipient address
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
+    const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
+    const inputAmountHex = ethers.BigNumber.from(value.toString()).toHexString();
+  
+    const honeyswap = new ethers.Contract(
+      '0x1C232F01118CB8B424793ae03F870aa7D0ac7f77',
+      ['function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)'],
+      provider.getSigner()
+    )
+  
+    const tx = await honeyswap.swapExactETHForTokens(
+      amountOutMinHex,
+      path,
+      to,
+      deadline,
+      {value: inputAmountHex}
+    )
+  }
+
+  var xDaiBalance = (wallet.balance / (10 ** 18)).toFixed(3)
+  var [xDaiValue, setXDaiValue] = useState((xDaiBalance - 1).toFixed(3))
+
+  var [priceHNY, setPriceHNY] = useState(0)
+  var [hnyValue, setHNYValue] = useState(0)
+  async function setPairData() {
+
+    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
+    const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
+
+    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider).then(pair => {
+      const route = new Route([pair], WXDAI)
+      var price = route.midPrice.invert().toSignificant(6)
+      setPriceHNY(price)
+      setHNYValue((xDaiValue / price).toFixed(6))
     })
-    .catch(err => {
-      console.log(err)
-    })
+  }
+  setPairData()
+
   // WIP
-  var xDaiBalance = window.$fiatValue
-  var [xDaiValue, setXDaiValue] = useState(xDaiBalance - 1)
-  var [hnyValue, setHNYValue] = useState(xDaiBalance / 800)
   return (
     <div
       css={`
@@ -103,98 +142,125 @@ const HoneySwapCard = (props) =>{
           </ButtonBase>
         }
       />
-      <div
-        css={`
-          padding: 5%;
-          border-radius: 20px;
-          width: 100%;
-          margin: 0 auto;
-          position: center;
-          border-width: 1px;
-          background-color: ${theme.surfaceInteractive};
-          border-color: ${theme.border};
-          border-style: solid;
-        `}
-      >
-        <table width="100%">
-          <tr>
-            <td width="70%">From</td>
-            <td width="30%">Balance: {xDaiBalance}</td>
-          </tr>
-          <tr>
-            <td>
-              <TextInput
-                value={xDaiValue}
-                adornment={<Button size="mini" label="MAX" mode="strong" />}
-                adornmentPosition="end"
-                onChange={event => {
-                  if (event.target.value > 0) {
-                    setHNYValue(event.target.value / 600)
-                    setXDaiValue(event.target.value)
-                  } else {
-                    setHNYValue(0)
-                    setXDaiValue(0)
-                  }
-                }}
-              />
-            </td>
-            <td
+      
+      <Box>
+          <div
+            id="header"
+            css={`
+              padding-bottom: 10px;
+              ${textStyle("label2")}
+            `}
+          >
+            <div
               css={`
-                font-size: 32px;
-                font-weight: 1000;
+                float:left;
+                width:50%;
               `}
             >
-              <img
-                width="24px"
+              FROM
+            </div>
+            <div
+              css={`
+                float:right;
+                width:50%;
+                text-align:right;
+              `}
+            >
+              <span css="display:block">Balance: {xDaiBalance}</span>
+            </div>
+          </div>
+          <br />
+          <div
+            css={`
+              ${textStyle("label2")}
+              width:100%;
+            `}
+          >
+          <TextInput
+            wide
+            value={xDaiValue}
+            onChange={event => {
+              if (event.target.value >= 0) {
+                setHNYValue(event.target.value / priceHNY)
+                setXDaiValue(event.target.value)
+              } else {
+                setHNYValue(0)
+                setXDaiValue(0)
+              }
+            }}
+            adornment={
+              <div
                 css={`
-                  margin: 0px 10px 0px 0px;
+                  ${textStyle("label1")}
+                  padding-right: 5px
                 `}
-                src={xDaiIcon}
-              />
-              XDAI
-            </td>
-          </tr>
-        </table>
+              >
+                XDAI
+              </div>
+            }
+            adornmentPosition="end"
+          />
+          </div>
+          <br />
 
-        <table width="100%">
-          <tr>
-            <td width="70%">To</td>
-          </tr>
-          <tr>
-            <td>
-              <TextInput
-                value={hnyValue}
-                adornment={<Button size="mini" label="MAX" mode="strong" />}
-                adornmentPosition="end"
-                onChange={event => {
-                  if (event.target.value > 0) {
-                    setHNYValue(event.target.value * 600)
-                    setXDaiValue(event.target.value)
-                  } else {
-                    setHNYValue(0)
-                    setXDaiValue(0)
-                  }
-                }}
-              />
-            </td>
-            <td
+          <div
+            id="header"
+            css={`
+              padding-bottom: 10px;
+              ${textStyle("label2")}
+            `}
+          >
+            <div
               css={`
-                font-size: 32px;
-                font-weight: 1000;
+                float:left;
+                width:50%;
               `}
             >
-              <img
-                width="24px"
+              TO
+            </div>
+          </div>
+          <br />
+          <div
+            css={`
+              ${textStyle("label2")}
+              width:100%;
+            `}
+          >
+          <TextInput
+            wide
+            value={hnyValue}
+            onChange={event => {
+              if (event.target.value > 0) {
+                setHNYValue(event.target.value * priceHNY)
+                setXDaiValue(event.target.value)
+              } else {
+                setHNYValue(0)
+                setXDaiValue(0)
+              }
+            }}
+            adornment={
+              <div
                 css={`
-                  margin: 0px 10px 0px 0px;
+                  ${textStyle("label1")}
+                  padding-right: 5px
                 `}
-                src="https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9/logo.png"
-              />
-              HNY
-            </td>
-          </tr>
-        </table>
-      </div>
+              >
+                HNY
+              </div>
+            }
+            adornmentPosition="end"
+          />
+          </div>
+          <br />
+          <Button
+            wide
+            onClick={() => {
+              swap(xDaiValue * (10 ** 18))
+            }}
+          >
+            SWAP
+          </Button>
+        </Box>
     </div>
   )
 }
