@@ -11,8 +11,6 @@ class Step2 extends React.Component {
   }
 
   render() {
-    // REMOVE THESE!
-    window.$id = 322 // remove
     return (
       <div
         css={`

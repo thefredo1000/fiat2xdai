@@ -73,6 +73,7 @@ const HoneySwapCard = (props) =>{
       deadline,
       {value: inputAmountHex}
     )
+    return (tx)
   }
 
   var xDaiBalance = (wallet.balance / (10 ** 18)).toFixed(3)
@@ -80,6 +81,7 @@ const HoneySwapCard = (props) =>{
 
   var [priceHNY, setPriceHNY] = useState(0)
   var [hnyValue, setHNYValue] = useState(0)
+
   async function setPairData() {
 
     const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
@@ -187,6 +189,8 @@ const HoneySwapCard = (props) =>{
                 setHNYValue(0)
                 setXDaiValue(0)
               }
+              console.log(xDaiValue, xDaiBalance)
+              console.log(parseFloat(xDaiValue) > parseFloat(xDaiBalance))
             }}
             adornment={
               <div
@@ -229,6 +233,7 @@ const HoneySwapCard = (props) =>{
           <TextInput
             wide
             value={hnyValue}
+            disabled
             onChange={event => {
               if (event.target.value > 0) {
                 setHNYValue(event.target.value * priceHNY)
@@ -254,8 +259,12 @@ const HoneySwapCard = (props) =>{
           <br />
           <Button
             wide
+            disabled={(parseFloat(xDaiValue) > parseFloat(xDaiBalance) || !xDaiValue || xDaiValue == 0)}
             onClick={() => {
-              swap(xDaiValue * (10 ** 18))
+
+              swap(xDaiValue * (10 ** 18)).then(res => {
+                props.setStep(props.currStep + 1)
+              })
             }}
           >
             SWAP

@@ -30,9 +30,11 @@ function Step3(props) {
           margin: auto;
         `}
       >
-        <HoneySwapCard />
+        <HoneySwapCard
+          currStep={props.currStep}
+          setStep={props.setStep}
+        />
       </div>
-      <h1>Ernest {window.$fiatValue}</h1>
       <br />
       <Button
         onClick={() => {
