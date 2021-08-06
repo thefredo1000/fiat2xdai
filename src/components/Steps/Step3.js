@@ -1,7 +1,6 @@
 import React from 'react'
-import { Button } from '@1hive/1hive-ui'
 import { useWallet } from 'use-wallet'
-import HoneySwapCard from '../Swap/HoneySwapCard'
+import XDAIWrapCard from '../Wrap/XDAIWrapCard'
 
 function Step3(props) {
   const wallet = useWallet()
@@ -30,19 +29,12 @@ function Step3(props) {
           margin: auto;
         `}
       >
-        <HoneySwapCard
+        <XDAIWrapCard
           currStep={props.currStep}
           setStep={props.setStep}
         />
       </div>
       <br />
-      <Button
-        onClick={() => {
-          props.setStep(props.currStep + 1)
-        }}
-      >
-        Next Step
-      </Button>
     </div>
   )
 }

@@ -44,7 +44,7 @@ const HoneySwapCard = (props) =>{
 
     const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
     const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
-
+    
     const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider)
     const route = new Route([pair], WXDAI)
 
@@ -55,7 +55,7 @@ const HoneySwapCard = (props) =>{
     const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
     const amountOutMinHex = ethers.BigNumber.from(amountOutMin.toString()).toHexString();
     const path = [WXDAI.address, HNY.address]
-    const to = '0x29FFeBCa51ecD940cb37EF91ff83cD739553b93e' // should be a checksummed recipient address
+    const to = wallet.account // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
     const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
     const inputAmountHex = ethers.BigNumber.from(value.toString()).toHexString();
@@ -73,6 +73,36 @@ const HoneySwapCard = (props) =>{
       deadline,
       {value: inputAmountHex}
     )
+    return (tx)
+  }
+
+  async function wrap(amountIn) {
+
+    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
+    const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
+    
+    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider)
+    const route = new Route([pair], WXDAI)
+
+    const trade = new Trade(route, new TokenAmount(WXDAI, amountIn.toString()), TradeType.EXACT_INPUT)
+  
+    const slippageTolerance = new Percent('50', '10000') // 50 bips, or 0.50%
+  
+    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
+    const amountOutMinHex = ethers.BigNumber.from(amountIn.toString()).toHexString();
+    const path = [WXDAI.address, HNY.address]
+    const to = wallet.account // should be a checksummed recipient address
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
+    const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
+    const inputAmountHex = ethers.BigNumber.from(value.toString());
+    const honeyswap = new ethers.Contract(
+      '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+      ['function deposit() payable'],
+      provider.getSigner()
+    )
+    console.log(honeyswap)
+    const tx = await honeyswap.deposit({ value: inputAmountHex })
+    console.log(tx)
     return (tx)
   }
 
@@ -268,6 +298,19 @@ const HoneySwapCard = (props) =>{
             }}
           >
             SWAP
+          </Button>
+
+          <Button
+            wide
+            disabled={(parseFloat(xDaiValue) > parseFloat(xDaiBalance) || !xDaiValue || xDaiValue == 0)}
+            onClick={() => {
+
+              wrap(xDaiValue * (10 ** 18)).then(res => {
+                props.setStep(props.currStep + 1)
+              })
+            }}
+          >
+            wrap
           </Button>
         </Box>
     </div>

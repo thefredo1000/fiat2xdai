@@ -1,8 +1,4 @@
 import React from 'react'
-import AccountModuleAlt from '../Account/AccountModuleAlt'
-import { Link } from '@1hive/1hive-ui'
-
-import MetamaskDownload from '../../assets/metamask-download.png'
 
 class Step4 extends React.Component {
   constructor(currStep) {
@@ -20,6 +16,7 @@ class Step4 extends React.Component {
           align-items: center;
         `}
       >
+        THIS IS WORK IN PROGRESS!
       </div>
     )
   }

@@ -16,6 +16,7 @@ class StepWizard extends React.Component {
   }
 
   setStep(currStep) {
+    console.log(currStep)
     this.currStep = currStep
     this.forceUpdate()
   }
@@ -50,13 +51,13 @@ class StepWizard extends React.Component {
           )}
           {this.currStep === 3 && (
             <Step3 setStep={this.setStep}>
-              {this.currStep}
+              {3}
             </Step3> /* Loads the Third step */
           )}
           {this.currStep === 4 && (
             <Step4 setStep={this.setStep}>
               {this.currStep}
-            </Step4> /* Loads the Third step */
+            </Step4> /* Loads the Fourth step */
           )}
         </div>
       </div>
