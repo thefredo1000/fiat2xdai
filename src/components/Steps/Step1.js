@@ -43,6 +43,7 @@ class Step1 extends React.Component {
           createdAt: event.createdAt,
           updatedAt: event.updatedAt,
           status: event.status,
+          connected: false
         }
         // Save the info
         axios.post('http://localhost:8082/api/tickets', payload).then(res => {
@@ -54,7 +55,6 @@ class Step1 extends React.Component {
           .then(res => {
             window.$id = res.data.id
             window.$fiatValue = res.data.fiatValue
-            console.log('get request works!')
           })
         this.setStep(this.currStep + 1)
       })

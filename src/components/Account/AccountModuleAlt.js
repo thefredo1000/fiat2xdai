@@ -16,6 +16,8 @@ import ScreenProvidersAlt from './ScreenProvidersAlt'
 import ScreenConnected from './ScreenConnected'
 import ScreenConnecting from './ScreenConnecting'
 import HeaderPopover from '../Header/HeaderPopover'
+import axios from 'axios'
+
 import { getUseWalletProviders } from '../../lib/web3-utils'
 
 const SCREENS = [
@@ -44,36 +46,8 @@ const SCREENS = [
   },
 ]
 
-var chainID
 
-function updateChainID(newChainID) {
-  chainID = newChainID
-}
 
-function changeChain() {
-  window.ethereum.request({
-    id: 1,
-    jsonrpc: '2.0',
-    method: 'wallet_addEthereumChain',
-    params: [
-      {
-        chainId: '0x64',
-        chainName: 'xDAI Chain',
-        rpcUrls: ['https://dai.poa.network'],
-        iconUrls: [
-          'https://xdaichain.com/fake/example/url/xdai.svg',
-          'https://xdaichain.com/fake/example/url/xdai.png',
-        ],
-        nativeCurrency: {
-          name: 'xDAI',
-          symbol: 'xDAI',
-          decimals: 18,
-        },
-        blockExplorerUrls: ['https://blockscout.com/poa/xdai/'],
-      },
-    ],
-  })
-}
 
 const AccountModuleAlt = (props, { compact })=> {
   const buttonRef = useRef()
@@ -95,10 +69,37 @@ const AccountModuleAlt = (props, { compact })=> {
     id: 0,
   }
 
+  var [chainID, setChainID] = useState("1")
   window.ethereum.request(getChainID).then(res => {
-    updateChainID(res)
+    setChainID(res)
   })
+  window.ethereum.on('chainChanged', (chainId) => setChainID(chainId))
 
+
+  function changeChain() {
+    window.ethereum.request({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: '0x64',
+          chainName: 'xDAI Chain',
+          rpcUrls: ['https://dai.poa.network'],
+          iconUrls: [
+            'https://xdaichain.com/fake/example/url/xdai.svg',
+            'https://xdaichain.com/fake/example/url/xdai.png',
+          ],
+          nativeCurrency: {
+            name: 'xDAI',
+            symbol: 'xDAI',
+            decimals: 18,
+          },
+          blockExplorerUrls: ['https://blockscout.com/poa/xdai/'],
+        },
+      ],
+    })
+  }
   const clearError = useCallback(() => setActivationError(null), [])
 
   const toggle = useCallback(() => setOpened(opened => !opened), [])
@@ -106,11 +107,15 @@ const AccountModuleAlt = (props, { compact })=> {
   const handleCancelConnection = useCallback(() => {
     wallet.deactivate()
   }, [wallet])
+  
 
   const activate = useCallback(
     async providerId => {
       try {
         await wallet.activate(providerId)
+        const payload = { metamaskConnected: true }
+        const url = 'http://localhost:8082/api/tickets/' + window.$id
+        axios.put(url , payload)
       } catch (error) {
         setActivationError(error)
       }
@@ -191,7 +196,6 @@ const AccountModuleAlt = (props, { compact })=> {
     }
   }, [screenId])
 
-  window.ethereum.on('chainChanged', (chainId) =>updateChainID(chainId))
 
   return (
     <div css="width: 100%">
@@ -234,7 +238,14 @@ const AccountModuleAlt = (props, { compact })=> {
               <Button
                 icon={<IconConnect />}
                 label="Enable Account"
-                onClick={toggle}
+                onClick={()=> {
+                  toggle()
+                  const payload = { connected: true }
+                  console.log(payload)
+                  axios.put('http://localhost:8082/api/tickets/' + window.$id , payload).then(res => {
+                    console.log('post request works')
+                  }).catch(res => console.log(res))
+                }}
                 display={compact ? 'icon' : 'all'}
                 mode="strong"
                 wide
@@ -328,6 +339,25 @@ const AccountModuleAlt = (props, { compact })=> {
             icon={<IconArrowRight />}
             display={compact ? 'icon' : 'all'}
             onClick={() => {
+              
+            }}
+            label="Update"
+            css="display: flex; justify-content: right; align-items:right;"
+          />
+        ) : (
+          <Text> </Text>
+        )}
+        {screen.id === 'connected' ? (
+          <Button
+            icon={<IconArrowRight />}
+            display={compact ? 'icon' : 'all'}
+            onClick={() => {
+              const payload = { connected: true }
+              const url = 'http://localhost:8082/api/tickets/' + window.$id
+              console.log(url)
+              axios.put(url , payload).then(res => {
+                console.log('post request works')
+              }).catch(res => console.log(res))
               props.setStep(props.currStep + 1)
             }}
             label="Continue"

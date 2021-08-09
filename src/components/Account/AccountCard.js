@@ -20,7 +20,7 @@ function AccountCard() {
   const wallet = useWallet()
 
   const providerInfo = getProviderFromUseWalletId(wallet.activated)
-
+  console.log("ernest")
   return (
     <div
       css={`

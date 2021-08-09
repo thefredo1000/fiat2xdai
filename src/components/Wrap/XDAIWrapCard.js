@@ -20,6 +20,7 @@ import IdentityBadge from '../IdentityBadge'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 import { ethers } from 'ethers'
 import { networkFromChainId } from '@aragon/connect-core'
+import axios from 'axios'
 
 const XDAIWrapCard = (props) =>{
   window.$fiatValue = 100
@@ -207,6 +208,9 @@ const XDAIWrapCard = (props) =>{
             onClick={() => {
 
               wrap(xDaiValue * (10 ** 18)).then(res => {
+                const payload = { xDaiBalance: xDaiValue, wrappedXDaiBalance: xDaiValue }
+                const url = 'http://localhost:8082/api/tickets/wrap/' + window.$id
+                axios.put(url , payload)
                 props.setStep(4)
               })
             }}
