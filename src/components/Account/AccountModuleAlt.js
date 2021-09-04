@@ -339,19 +339,6 @@ const AccountModuleAlt = (props, { compact })=> {
             icon={<IconArrowRight />}
             display={compact ? 'icon' : 'all'}
             onClick={() => {
-              
-            }}
-            label="Update"
-            css="display: flex; justify-content: right; align-items:right;"
-          />
-        ) : (
-          <Text> </Text>
-        )}
-        {screen.id === 'connected' ? (
-          <Button
-            icon={<IconArrowRight />}
-            display={compact ? 'icon' : 'all'}
-            onClick={() => {
               const payload = { connected: true }
               const url = 'http://localhost:8082/api/tickets/' + window.$id
               console.log(url)

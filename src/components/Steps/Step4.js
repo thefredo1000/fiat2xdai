@@ -1,4 +1,5 @@
 import React from 'react'
+import AgaveDepositCard from '../Agave/Deposit'
 
 class Step4 extends React.Component {
   constructor(currStep) {
@@ -16,7 +17,7 @@ class Step4 extends React.Component {
           align-items: center;
         `}
       >
-        THIS IS WORK IN PROGRESS!
+        <AgaveDepositCard/>
       </div>
     )
   }

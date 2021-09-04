@@ -10,19 +10,13 @@ import {
   Header,
   RADIUS,
   ButtonBase,
-  Table,
-  TableRow,
-  TableCell,
-  Split,
   Box,
   textStyle
 } from '@aragon/ui'
 import { useWallet } from 'use-wallet'
-import { Fetcher, ChainId, Token, WETH, Route, Trade, TokenAmount, TradeType, Currency, currencyEquals, Percent, Pair } from '@1hive/honeyswap-sdk'
-import { Contract } from '@ethersproject/contracts'
+import { Fetcher, ChainId, Token, Route, Trade, TokenAmount, TradeType, Percent } from '@1hive/honeyswap-sdk'
 
 import IdentityBadge from '../IdentityBadge'
-import xDaiIcon from '../../assets/xDai-icon.png'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 import { ethers } from 'ethers'
 import { networkFromChainId } from '@aragon/connect-core'
@@ -42,10 +36,10 @@ const HoneySwapCard = (props) =>{
 
   async function swap(amountIn) {
 
-    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
+    const USDC: Token = await Fetcher.fetchTokenData(chainId, '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83', provider)
     const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
     
-    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider)
+    const pair = await Fetcher.fetchPairData(USDC, WXDAI, provider)
     const route = new Route([pair], WXDAI)
 
     const trade = new Trade(route, new TokenAmount(WXDAI, amountIn.toString()), TradeType.EXACT_INPUT)
@@ -54,7 +48,7 @@ const HoneySwapCard = (props) =>{
   
     const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
     const amountOutMinHex = ethers.BigNumber.from(amountOutMin.toString()).toHexString();
-    const path = [WXDAI.address, HNY.address]
+    const path = [WXDAI.address, USDC.address]
     const to = wallet.account // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
     const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
@@ -76,53 +70,24 @@ const HoneySwapCard = (props) =>{
     return (tx)
   }
 
-  async function wrap(amountIn) {
-
-    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
-    const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
-    
-    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider)
-    const route = new Route([pair], WXDAI)
-
-    const trade = new Trade(route, new TokenAmount(WXDAI, amountIn.toString()), TradeType.EXACT_INPUT)
-  
-    const slippageTolerance = new Percent('50', '10000') // 50 bips, or 0.50%
-  
-    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw // needs to be converted to e.g. hex
-    const amountOutMinHex = ethers.BigNumber.from(amountIn.toString()).toHexString();
-    const path = [WXDAI.address, HNY.address]
-    const to = wallet.account // should be a checksummed recipient address
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
-    const value = trade.inputAmount.raw // // needs to be converted to e.g. hex
-    const inputAmountHex = ethers.BigNumber.from(value.toString());
-    const honeyswap = new ethers.Contract(
-      '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
-      ['function deposit() payable'],
-      provider.getSigner()
-    )
-    console.log(honeyswap)
-    const tx = await honeyswap.deposit({ value: inputAmountHex })
-    console.log(tx)
-    return (tx)
-  }
-
   var xDaiBalance = (wallet.balance / (10 ** 18)).toFixed(3)
   var [xDaiValue, setXDaiValue] = useState((xDaiBalance - 1).toFixed(3))
 
-  var [priceHNY, setPriceHNY] = useState(0)
-  var [hnyValue, setHNYValue] = useState(0)
+  var [priceUSDC, setPriceUSDC] = useState(0)
+  var [USDCValue, setUSDCValue] = useState(0)
 
   async function setPairData() {
 
-    const HNY: Token = await Fetcher.fetchTokenData(chainId, '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', provider)
+    const USDC: Token = await Fetcher.fetchTokenData(chainId, '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83', provider)
     const WXDAI: Token = await Fetcher.fetchTokenData(chainId, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d', provider, 'WXDAI', "Wrapped XDAI")
 
-    const pair = await Fetcher.fetchPairData(HNY, WXDAI, provider).then(pair => {
+    const pair = await Fetcher.fetchPairData(USDC, WXDAI, provider).then(pair => {
       const route = new Route([pair], WXDAI)
       var price = route.midPrice.invert().toSignificant(6)
-      setPriceHNY(price)
-      setHNYValue((xDaiValue / price).toFixed(6))
+      setPriceUSDC(price)
+      setUSDCValue((xDaiValue / price).toFixed(6))
     })
+    return pair
   }
   setPairData()
 
@@ -213,10 +178,10 @@ const HoneySwapCard = (props) =>{
             value={xDaiValue}
             onChange={event => {
               if (event.target.value >= 0) {
-                setHNYValue(event.target.value / priceHNY)
+                setUSDCValue(event.target.value / priceUSDC)
                 setXDaiValue(event.target.value)
               } else {
-                setHNYValue(0)
+                setUSDCValue(0)
                 setXDaiValue(0)
               }
               console.log(xDaiValue, xDaiBalance)
@@ -262,14 +227,14 @@ const HoneySwapCard = (props) =>{
           >
           <TextInput
             wide
-            value={hnyValue}
+            value={USDCValue}
             disabled
             onChange={event => {
               if (event.target.value > 0) {
-                setHNYValue(event.target.value * priceHNY)
+                setUSDCValue(event.target.value * priceUSDC)
                 setXDaiValue(event.target.value)
               } else {
-                setHNYValue(0)
+                setUSDCValue(0)
                 setXDaiValue(0)
               }
             }}
@@ -280,7 +245,7 @@ const HoneySwapCard = (props) =>{
                   padding-right: 5px
                 `}
               >
-                HNY
+                USDC
               </div>
             }
             adornmentPosition="end"
@@ -289,7 +254,7 @@ const HoneySwapCard = (props) =>{
           <br />
           <Button
             wide
-            disabled={(parseFloat(xDaiValue) > parseFloat(xDaiBalance) || !xDaiValue || xDaiValue == 0)}
+            disabled={(parseFloat(xDaiValue) > parseFloat(xDaiBalance) || !xDaiValue || xDaiValue === 0)}
             onClick={() => {
 
               swap(xDaiValue * (10 ** 18)).then(res => {
@@ -298,19 +263,6 @@ const HoneySwapCard = (props) =>{
             }}
           >
             SWAP
-          </Button>
-
-          <Button
-            wide
-            disabled={(parseFloat(xDaiValue) > parseFloat(xDaiBalance) || !xDaiValue || xDaiValue == 0)}
-            onClick={() => {
-
-              wrap(xDaiValue * (10 ** 18)).then(res => {
-                props.setStep(props.currStep + 1)
-              })
-            }}
-          >
-            wrap
           </Button>
         </Box>
     </div>

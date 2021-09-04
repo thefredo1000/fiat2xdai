@@ -8,7 +8,6 @@ class Step2 extends React.Component {
   constructor(currStep) {
     super(currStep)
     this.currStep = currStep.children
-    window.$id = 322
   }
 
   render() {

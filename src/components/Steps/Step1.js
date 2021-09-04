@@ -24,10 +24,10 @@ class Step1 extends React.Component {
     // Rikeby test SDK
     new RampInstantSDK({
       hostAppName: 'Fiat to xDai',
-      hostLogoUrl:
-        'https://cdn-images-1.medium.com/max/2600/1*nqtMwugX7TtpcS-5c3lRjw.png',
+      hostLogoUrl: 'https://ramp.network/assets/images/Logo.svg',
+      swapAsset: 'XDAI',
+      hostApiKey: 'sca3hysq6tknkgyery4w6xxktd3wufygnmaut3zy',
       variant: 'embedded-desktop',
-      url: 'https://ri-widget-staging.firebaseapp.com/',
       containerNode: rampContainer,
     })
       .on('PURCHASE_SUCCESSFUL', event => {

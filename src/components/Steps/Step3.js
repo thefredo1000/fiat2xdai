@@ -1,6 +1,6 @@
 import React from 'react'
 import { useWallet } from 'use-wallet'
-import XDAIWrapCard from '../Wrap/XDAIWrapCard'
+import AgaveDepositCard from '../Agave/Deposit'
 
 function Step3(props) {
   const wallet = useWallet()
@@ -29,7 +29,7 @@ function Step3(props) {
           margin: auto;
         `}
       >
-        <XDAIWrapCard
+        <AgaveDepositCard
           currStep={props.currStep}
           setStep={props.setStep}
         />
