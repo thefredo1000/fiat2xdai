@@ -1,9 +1,6 @@
-# 1hive-app-template
+# Fiat To xDai
 
 ## Header
 
-![header](./readmeImages/header.png)
-
-## Footer
-
-![footer](./readmeImages/footer.png)
+To run this repo:
+`npm start`
